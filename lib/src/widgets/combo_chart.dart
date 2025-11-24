@@ -133,20 +133,32 @@ class _ComboChartPainter extends CustomPainter {
     if (len == 0) return;
 
     // Calcular rangos
+    // Calcular rangos
     double minVal = 0;
     double maxVal = 0;
-    for (final v in barValues) {
-      if (v < minVal) minVal = v;
-      if (v > maxVal) maxVal = v;
+
+    if (barValues.isNotEmpty) {
+      minVal = barValues.reduce(math.min);
+      maxVal = barValues.reduce(math.max);
     }
-    for (final v in lineValues) {
-      if (v < minVal) minVal = v;
-      if (v > maxVal) maxVal = v;
+
+    if (lineValues.isNotEmpty) {
+      final lineMin = lineValues.reduce(math.min);
+      final lineMax = lineValues.reduce(math.max);
+      if (barValues.isEmpty) {
+        minVal = lineMin;
+        maxVal = lineMax;
+      } else {
+        minVal = math.min(minVal, lineMin);
+        maxVal = math.max(maxVal, lineMax);
+      }
     }
 
     // Margen para que no toque los bordes
     final range = maxVal - minVal;
-    final safeRange = range == 0 ? (maxVal == 0 ? 100.0 : maxVal) : range;
+    final safeRange = range <= 0
+        ? (maxVal == 0 ? 100.0 : (maxVal > 0 ? maxVal : 1.0))
+        : range;
     final chartMin = minVal - (safeRange * 0.1);
     final chartMax = maxVal + (safeRange * 0.1);
     final chartRange = chartMax - chartMin;

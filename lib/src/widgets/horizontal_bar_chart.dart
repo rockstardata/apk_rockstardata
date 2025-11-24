@@ -16,12 +16,21 @@ class HorizontalBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (values.isEmpty || labels.isEmpty || colors.isEmpty) {
+      return const Center(child: Text('No data available'));
+    }
+
+    final itemCount = values.length < labels.length
+        ? values.length
+        : labels.length;
+
     return Column(
-      children: List.generate(values.length, (index) {
+      children: List.generate(itemCount, (index) {
         final val = values[index];
         final label = labels[index];
         final color = colors[index % colors.length];
-        final percentage = (val / maxValue).clamp(0.0, 1.0);
+        final safeMax = maxValue <= 0 ? (val > 0 ? val : 1.0) : maxValue;
+        final percentage = (val / safeMax).clamp(0.0, 1.0);
 
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -32,6 +41,7 @@ class HorizontalBarChart extends StatelessWidget {
                 child: Text(
                   label,
                   style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 8),

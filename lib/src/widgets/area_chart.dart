@@ -79,10 +79,14 @@ class _AreaChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (size.width <= 0 || size.height <= 0 || values.isEmpty) return;
 
-    final minVal = values.reduce((a, b) => a < b ? a : b);
-    final maxVal = values.reduce((a, b) => a > b ? a : b);
+    final minVal = values.isEmpty
+        ? 0.0
+        : values.reduce((a, b) => a < b ? a : b);
+    final maxVal = values.isEmpty
+        ? 0.0
+        : values.reduce((a, b) => a > b ? a : b);
     final range = maxVal - minVal;
-    final safeRange = range == 0 ? (maxVal == 0 ? 1.0 : maxVal) : range;
+    final safeRange = range <= 0 ? (maxVal <= 0 ? 1.0 : maxVal) : range;
 
     // Margen inferior para etiquetas
     final bottomMargin = showLabels ? 20.0 : 0.0;

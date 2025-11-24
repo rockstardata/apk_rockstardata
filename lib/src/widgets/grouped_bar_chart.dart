@@ -41,16 +41,18 @@ class GroupedBarChart extends StatelessWidget {
         Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              if (values1.isEmpty) return const SizedBox();
+              if (values1.isEmpty || values2.isEmpty) return const SizedBox();
+              if (values1.length != values2.length)
+                return const Center(child: Text('Data mismatch'));
 
               final width = constraints.maxWidth;
               final height = constraints.maxHeight;
 
               // Calcular máximo global
-              final max1 = values1.reduce(math.max);
-              final max2 = values2.reduce(math.max);
+              final max1 = values1.isEmpty ? 0.0 : values1.reduce(math.max);
+              final max2 = values2.isEmpty ? 0.0 : values2.reduce(math.max);
               final maxVal = math.max(max1, max2);
-              final safeMax = maxVal == 0 ? 100.0 : maxVal * 1.1;
+              final safeMax = maxVal <= 0 ? 100.0 : maxVal * 1.1;
 
               final barGroupWidth = width / values1.length;
               final barWidth = barGroupWidth * 0.3;
