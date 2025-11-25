@@ -59,74 +59,82 @@ class _StackedBarChartState extends State<StackedBarChart>
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(widget.labels.length, (index) {
-            final incomeValue = widget.incomeValues[index];
-            final expenseValue = widget.expenseValues[index];
-            final total = incomeValue + expenseValue;
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: List.generate(widget.labels.length, (index) {
+              final incomeValue = widget.incomeValues[index];
+              final expenseValue = widget.expenseValues[index];
 
-            final incomeHeight =
-                (incomeValue / maxValue) * 150 * _animation.value;
-            final expenseHeight =
-                (expenseValue / maxValue) * 150 * _animation.value;
+              final incomeHeight =
+                  (incomeValue / maxValue) * 150 * _animation.value;
+              final expenseHeight =
+                  (expenseValue / maxValue) * 150 * _animation.value;
 
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    // Stacked bars
-                    Container(
-                      height: 150,
-                      alignment: Alignment.bottomCenter,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          // Expense bar (on top)
-                          if (expenseHeight > 0)
-                            Container(
-                              height: expenseHeight,
-                              decoration: BoxDecoration(
-                                color: widget.expenseColor,
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(4),
+              return SizedBox(
+                width: 70, // Fixed width per bar
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // Stacked bars
+                      Container(
+                        height: 150,
+                        alignment: Alignment.bottomCenter,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 50),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              // Expense bar (on top)
+                              if (expenseHeight > 0)
+                                Container(
+                                  width: double.infinity,
+                                  height: expenseHeight,
+                                  decoration: BoxDecoration(
+                                    color: widget.expenseColor,
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(4),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          // Income bar (on bottom)
-                          if (incomeHeight > 0)
-                            Container(
-                              height: incomeHeight,
-                              decoration: BoxDecoration(
-                                color: widget.incomeColor,
-                                borderRadius: expenseHeight == 0
-                                    ? const BorderRadius.vertical(
-                                        top: Radius.circular(4),
-                                      )
-                                    : null,
-                              ),
-                            ),
-                        ],
+                              // Income bar (on bottom)
+                              if (incomeHeight > 0)
+                                Container(
+                                  width: double.infinity,
+                                  height: incomeHeight,
+                                  decoration: BoxDecoration(
+                                    color: widget.incomeColor,
+                                    borderRadius: expenseHeight == 0
+                                        ? const BorderRadius.vertical(
+                                            top: Radius.circular(4),
+                                          )
+                                        : null,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Label
-                    Text(
-                      widget.labels[index],
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 8),
+                      // Label
+                      Text(
+                        widget.labels[index],
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          ),
         );
       },
     );
