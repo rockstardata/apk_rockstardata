@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/app_state.dart';
-import '../widgets/vista_express_kpis.dart';
-import '../widgets/ingresos_por_dia_card.dart';
-import '../widgets/ingresos_por_restaurante_chart.dart';
-import '../widgets/ingresos_por_turno_pie.dart';
-import '../widgets/origen_ingresos_pie.dart';
+import '../widgets/vista_express_widgets.dart';
 import '../widgets/loading_widget.dart';
 
 class VistaExpressPage extends StatelessWidget {
@@ -12,89 +8,185 @@ class VistaExpressPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: AppState.instance.isLoading,
-      builder: (context, isLoading, _) {
-        if (isLoading) {
-          return const LoadingWidget(message: 'Cargando datos...');
-        }
+    return Scaffold(
+      backgroundColor: Colors.grey[50], // Light background
+      body: ValueListenableBuilder<bool>(
+        valueListenable: AppState.instance.isLoading,
+        builder: (context, isLoading, _) {
+          if (isLoading) {
+            return const LoadingWidget(message: 'Cargando datos...');
+          }
 
-        return ValueListenableBuilder<Map<String, double>>(
-          valueListenable: AppState.instance.metrics,
-          builder: (context, metrics, _) {
-            final ingresos = metrics['ingresos_totales'] ?? 0.0;
-            final comensales = metrics['comensales'] ?? 0.0;
-            final ticketMedio = metrics['ticket_medio'] ?? 0.0;
+          return ValueListenableBuilder<Map<String, double>>(
+            valueListenable: AppState.instance.metrics,
+            builder: (context, metrics, _) {
+              final ingresos = metrics['ingresos_totales'] ?? 0.0;
+              final gastos = metrics['gastos_totales'] ?? 0.0;
+              final balance = ingresos - gastos;
 
-            // Eliminamos la lectura estática de valores aquí
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.black, // Dark icon
+                            size: 20,
+                          ),
+                          onPressed: () {}, // No action for now
+                        ),
+                        const Text(
+                          'Resumen Semanal',
+                          style: TextStyle(
+                            color: Colors.black, // Dark text
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Text(
+                          '18 - 24 Nov',
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // KPIs superiores - optimizado para móviles
-                  VistaExpressKPIs(
-                    ingresos: ingresos,
-                    comensales: comensales,
-                    ticketMedio: ticketMedio,
-                    isWide: false, // Siempre móvil
-                  ),
-                  const SizedBox(height: 20),
+                    // Balance Card
+                    BalanceCard(
+                      balance: balance,
+                      percentageChange: 12.0, // Mocked for now
+                    ),
+                    const SizedBox(height: 16),
 
-                  // Gráfico de ingresos por día
-                  ValueListenableBuilder<List<double>>(
-                    valueListenable: AppState.instance.ingresosDiarios,
-                    builder: (context, ingresosDiarios, _) {
-                      return IngresosPorDiaCard(values: ingresosDiarios);
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                    // Ingresos
+                    MiniChartCard(
+                      title: 'Ingresos',
+                      value: ingresos,
+                      percentageChange: 5.0,
+                      lineColor: const Color(0xFF2EB872),
+                      isPositiveChange: true,
+                    ),
+                    const SizedBox(height: 16),
 
-                  // Gráfico de ingresos por turno
-                  ValueListenableBuilder<List<double>>(
-                    valueListenable: AppState.instance.ingresosPorTurno,
-                    builder: (context, ingresosPorTurno, _) {
-                      return IngresosPorTurnoPie(valores: ingresosPorTurno);
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                    // Gastos
+                    MiniChartCard(
+                      title: 'Gastos',
+                      value: gastos,
+                      percentageChange: 8.0,
+                      lineColor: Colors.redAccent,
+                      isPositiveChange:
+                          false, // Increased expenses is usually "negative" but UI shows red +8%
+                    ),
+                    const SizedBox(height: 24),
 
-                  // Gráfico de línea de ingresos
-                  ValueListenableBuilder<List<double>>(
-                    valueListenable: AppState.instance.ingresosDiarios,
-                    builder: (context, ingresosDiarios, _) {
-                      return IngresosPorRestauranteChart(
-                        points: ingresosDiarios,
-                        height: 220,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                    // Transacciones Recientes
+                    const Text(
+                      'Transacciones Recientes',
+                      style: TextStyle(
+                        color: Colors.black, // Dark text
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const TransactionItem(
+                      title: 'Venta TPV',
+                      subtitle: 'Ingreso',
+                      amount: 250.00,
+                      isIncome: true,
+                    ),
+                    const TransactionItem(
+                      title: 'Pedido a proveedor',
+                      subtitle: 'Gasto',
+                      amount: 1120.45,
+                      isIncome: false,
+                    ),
+                    const TransactionItem(
+                      title: 'Venta en efectivo',
+                      subtitle: 'Ingreso',
+                      amount: 86.50,
+                      isIncome: true,
+                    ),
 
-                  // Gráfico de origen de ingresos
-                  ValueListenableBuilder<Map<String, double>>(
-                    valueListenable: AppState.instance.origenIngresos,
-                    builder: (context, origenIngresos, _) {
-                      final totalIngresos = AppState
-                          .instance
-                          .ingresosDiarios
-                          .value
-                          .fold<double>(0, (a, b) => a + b);
-                      return OrigenIngresosPie(
-                        origenes: origenIngresos,
-                        total: totalIngresos,
-                      );
-                    },
-                  ),
+                    const SizedBox(height: 24),
 
-                  const SizedBox(height: 24),
-                ],
-              ),
-            );
-          },
-        );
-      },
+                    // Bottom Buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.pinkAccent,
+                              elevation: 2,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: const Column(
+                              children: [
+                                Text(
+                                  'Añadir',
+                                  style: TextStyle(color: Colors.pinkAccent),
+                                ),
+                                Text(
+                                  'Gasto',
+                                  style: TextStyle(
+                                    color: Colors.pinkAccent,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color(0xFF2EB872),
+                              elevation: 2,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: const Column(
+                              children: [
+                                Text(
+                                  'Añadir',
+                                  style: TextStyle(color: Color(0xFF2EB872)),
+                                ),
+                                Text(
+                                  'Ingreso',
+                                  style: TextStyle(
+                                    color: Color(0xFF2EB872),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

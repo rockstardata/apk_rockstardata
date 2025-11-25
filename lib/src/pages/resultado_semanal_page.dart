@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-import '../widgets/simple_line_chart.dart';
-import '../widgets/simple_bar_chart.dart';
+﻿import 'package:flutter/material.dart';
+import '../widgets/stacked_bar_chart.dart';
 import '../services/app_state.dart';
 import '../widgets/loading_widget.dart';
 
@@ -19,240 +18,240 @@ class ResultadoSemanalView extends StatelessWidget {
         return ValueListenableBuilder<Map<String, double>>(
           valueListenable: AppState.instance.metrics,
           builder: (context, metrics, _) {
-            final ingresos = metrics['ingresos_totales'] ?? 0.0;
-            final comensales = metrics['comensales']?.toInt() ?? 0;
-            final ticket = metrics['ticket_medio'] ?? 0.0;
+            final ingresos = metrics['ingresos_totales'] ?? 4850.75;
+            final gastos = metrics['gastos_totales'] ?? 1920.40;
+            final beneficio = ingresos - gastos;
 
-            // Eliminamos la lógica estática de puntos aquí para moverla dentro del builder
-
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header - optimizado para móviles
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
+            return Container(
+              color: Colors.grey[50],
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
                             'Resultado Semanal',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
                           ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.grey.shade300),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Text(
-                                '17-23 nov',
-                                style: TextStyle(
-                                  fontSize: 11,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey.shade300),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Semana: 15-19 Mayo',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Color(0xFF6200EE),
+                                  ),
+                                ),
+                                SizedBox(width: 4),
+                                Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 16,
                                   color: Color(0xFF6200EE),
                                 ),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                                size: 14,
-                                color: Color(0xFF6200EE),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // KPIs row - optimizado para móviles
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        SizedBox(
-                          width: (MediaQuery.of(context).size.width - 48) / 3,
-                          child: _kpiSmall(
-                            'Ingresos Totales',
-                            '${ingresos.toStringAsFixed(0)} €',
-                            '-66%',
-                            subtitle: 'vs 21.413 €',
-                          ),
-                        ),
-                        SizedBox(
-                          width: (MediaQuery.of(context).size.width - 48) / 3,
-                          child: _kpiSmall(
-                            'Comensales',
-                            '$comensales',
-                            '+0%',
-                            subtitle: 'vs 530',
-                          ),
-                        ),
-                        SizedBox(
-                          width: (MediaQuery.of(context).size.width - 48) / 3,
-                          child: _kpiSmall(
-                            'Ticket Medio',
-                            '${ticket.toStringAsFixed(2)} €',
-                            '+812%',
-                            subtitle: 'vs 31,79 €',
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Gráfico de línea - optimizado para móviles
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color.fromRGBO(0, 0, 0, 0.04),
-                            blurRadius: 8,
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      const SizedBox(height: 16),
+                      Row(
                         children: [
-                          const Text(
-                            'Beneficio Estimado',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          Expanded(
+                            child: _kpiCard(
+                              'Ingresos Totales',
+                              '€${ingresos.toStringAsFixed(2)}',
+                              const Color(0xFF2EB872),
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            height: 200,
-                            width: double.infinity,
-                            child: ValueListenableBuilder<List<double>>(
-                              valueListenable:
-                                  AppState.instance.ingresosDiarios,
-                              builder: (context, ingresosDiarios, _) {
-                                final base = ingresos <= 0 ? 1000.0 : ingresos;
-                                final points =
-                                    ingresosDiarios.isNotEmpty &&
-                                        ingresosDiarios.any((v) => v > 0)
-                                    ? ingresosDiarios
-                                    : [
-                                        base * 0.5,
-                                        base * 0.75,
-                                        base * 0.6,
-                                        base * 0.9,
-                                        base,
-                                        base * 0.85,
-                                        base * 0.7,
-                                      ];
-                                return SimpleLineChart(
-                                  points: points,
-                                  color: const Color(0xFF8E24AA),
-                                );
-                              },
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _kpiCard(
+                              'Gastos Totales',
+                              '€${gastos.toStringAsFixed(2)}',
+                              Colors.red,
                             ),
                           ),
                         ],
                       ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Métricas adicionales - en columna para móviles
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _smallMetric(
-                            'Ratio Personal',
-                            '83%',
-                            '41 pp',
-                            Colors.red,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _smallMetric(
-                            'Ratio COGS',
-                            '0%',
-                            '-27 pp',
-                            Colors.green,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Gráfico de barras - optimizado para móviles
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 5,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                      const SizedBox(height: 12),
+                      _kpiCard(
+                        'Beneficio',
+                        '€${beneficio.toStringAsFixed(2)}',
+                        Colors.black,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Ingresos por día',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                      const SizedBox(height: 24),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            height: 200,
-                            width: double.infinity,
-                            child: ValueListenableBuilder<List<double>>(
-                              valueListenable:
-                                  AppState.instance.ingresosDiarios,
-                              builder: (context, ingresosDiarios, _) {
-                                return SimpleBarChart(
-                                  values: ingresosDiarios.isNotEmpty
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Ingresos vs. Gastos Diarios',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              height: 200,
+                              child: ValueListenableBuilder<List<double>>(
+                                valueListenable:
+                                    AppState.instance.ingresosDiarios,
+                                builder: (context, ingresosDiarios, _) {
+                                  final incomeValues =
+                                      ingresosDiarios.isNotEmpty
                                       ? ingresosDiarios
-                                      : [154, 194, 0, 215, 499, 454, 709],
-                                  labels: const [
-                                    'L',
-                                    'M',
-                                    'X',
-                                    'J',
-                                    'V',
-                                    'S',
-                                    'D',
-                                  ],
-                                  color: const Color(0xFF2EB872),
-                                );
-                              },
+                                      : [
+                                          500.0,
+                                          600.0,
+                                          400.0,
+                                          700.0,
+                                          800.0,
+                                          900.0,
+                                          1000.0,
+                                        ];
+
+                                  final expenseValues = [
+                                    200.0,
+                                    300.0,
+                                    250.0,
+                                    350.0,
+                                    400.0,
+                                    450.0,
+                                    500.0,
+                                  ];
+
+                                  return StackedBarChart(
+                                    incomeValues: incomeValues,
+                                    expenseValues: expenseValues,
+                                    labels: const [
+                                      'L',
+                                      'M',
+                                      'X',
+                                      'J',
+                                      'V',
+                                      'S',
+                                      'D',
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Productos Estrella de la Semana',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _productCard(
+                        'Mejora Clásico',
+                        '+€1,218.00',
+                        true,
+                        Icons.local_drink,
+                      ),
+                      const SizedBox(height: 8),
+                      _productCard(
+                        'Tabla de Ibéricos',
+                        '+€1,064.00',
+                        true,
+                        Icons.restaurant,
+                      ),
+                      const SizedBox(height: 8),
+                      _productCard(
+                        'Cerveza Alhambra',
+                        '+€930.00',
+                        true,
+                        Icons.sports_bar,
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Transacciones Relevantes',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _transactionItem(
+                        'Pago a proveedor',
+                        'Distribuciones Sur',
+                        '18 Mayo',
+                        '-€880.20',
+                        false,
+                      ),
+                      const SizedBox(height: 8),
+                      _transactionItem(
+                        'Ingreso evento',
+                        'Fiesta Privada',
+                        '17 Mayo',
+                        '+€1,800.00',
+                        true,
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2196F3),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
                             ),
                           ),
-                        ],
+                          child: const Text(
+                            'Exportar Reporte',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-
-                    const SizedBox(height: 24),
-                  ],
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -262,83 +261,169 @@ class ResultadoSemanalView extends StatelessWidget {
     );
   }
 
-  Widget _kpiSmall(
-    String title,
-    String value,
-    String percent, {
-    String subtitle = '',
-  }) {
+  Widget _kpiCard(String title, String value, Color valueColor) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             title,
-            style: const TextStyle(color: Colors.black54, fontSize: 12),
+            style: const TextStyle(color: Colors.black54, fontSize: 14),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 6),
-          Row(
-            children: [
-              Text(
-                percent,
-                style: TextStyle(
-                  color: percent.startsWith('+') ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  subtitle,
-                  style: const TextStyle(color: Colors.grey, fontSize: 11),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: valueColor,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _smallMetric(
-    String title,
+  Widget _productCard(
+    String name,
     String value,
-    String change,
-    Color changeColor,
+    bool isPositive,
+    IconData icon,
   ) {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        children: [
-          Text(title, style: const TextStyle(color: Colors.black54)),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          const SizedBox(height: 6),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF6200EE).withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: const Color(0xFF6200EE), size: 24),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isPositive ? const Color(0xFF2EB872) : Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _transactionItem(
+    String title,
+    String subtitle,
+    String date,
+    String amount,
+    bool isIncome,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isIncome
+                  ? const Color(0xFF2EB872).withOpacity(0.1)
+                  : Colors.red.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              isIncome ? Icons.arrow_downward : Icons.arrow_upward,
+              color: isIncome ? const Color(0xFF2EB872) : Colors.red,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  date,
+                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
           Text(
-            change,
-            style: TextStyle(color: changeColor, fontWeight: FontWeight.bold),
+            amount,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: isIncome ? const Color(0xFF2EB872) : Colors.red,
+            ),
           ),
         ],
       ),

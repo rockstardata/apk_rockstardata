@@ -6,6 +6,7 @@ import 'vista_general_page.dart';
 import 'vista_express_page.dart';
 import 'finanzas_page.dart';
 import 'director_compras_page.dart';
+import '../widgets/safe_widget.dart';
 
 class CompetenciaPage extends StatefulWidget {
   const CompetenciaPage({super.key});
@@ -75,20 +76,24 @@ class _CompetenciaPageState extends State<CompetenciaPage> {
   }
 
   Widget _buildContent() {
-    // Vistas para Finanzas
-    if (_selectedRole == 'Finanzas') {
-      return const FinanzasPage();
-    }
+    return SafeWidget(
+      builder: (context) {
+        // Vistas para Finanzas
+        if (_selectedRole == 'Finanzas') {
+          return const FinanzasPage();
+        }
 
-    // Vistas para Director de Compras
-    if (_selectedRole == 'Director de Compras') {
-      return const DirectorComprasPage();
-    }
+        // Vistas para Director de Compras
+        if (_selectedRole == 'Director de Compras') {
+          return const DirectorComprasPage();
+        }
 
-    // Vistas para CEO (Default)
-    if (_internalIndex == 1) return const ResultadoSemanalView();
-    if (_internalIndex == 2) return VistaGeneralPage();
+        // Vistas para CEO (Default)
+        if (_internalIndex == 1) return const ResultadoSemanalView();
+        if (_internalIndex == 2) return VistaGeneralPage();
 
-    return const VistaExpressPage();
+        return const VistaExpressPage();
+      },
+    );
   }
 }
