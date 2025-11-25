@@ -28,12 +28,6 @@ class _FinanzasPageState extends State<FinanzasPage> {
           'Dashboard Finanzas',
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person_outline, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
       ),
       drawer: _buildDrawer(),
       body: _selectedView == 'Vista General'
