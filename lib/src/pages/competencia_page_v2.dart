@@ -1,5 +1,3 @@
-import 'package:aplicativo_01/src/widgets/competencia_app_bar.dart';
-import 'package:aplicativo_01/src/widgets/internal_tab.dart';
 import 'package:flutter/material.dart';
 import 'resultado_semanal_page.dart';
 import 'vista_general_page.dart';
@@ -16,61 +14,144 @@ class CompetenciaPage extends StatefulWidget {
 }
 
 class _CompetenciaPageState extends State<CompetenciaPage> {
-  int _internalIndex = 0;
+  String _selectedView = 'Vista Express';
   String _selectedRole = 'CEO';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
-      appBar: CompetenciaAppBar(
-        selectedRole: _selectedRole,
-        onRoleChanged: (v) => setState(() {
-          print('CompetenciaPage: Role changed to $v');
-          _selectedRole = v;
-          // Reset index when changing role
-          _internalIndex = 0;
-        }),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 1,
+        leading: _selectedRole == 'CEO'
+            ? Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.menu, color: Colors.black),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                ),
+              )
+            : null,
+        title: Row(
+          children: [
+            Text(
+              _selectedRole == 'CEO'
+                  ? 'Dashboard CEO'
+                  : _selectedRole == 'Finanzas'
+                  ? 'Dashboard Finanzas'
+                  : 'Dashboard Compras',
+              style: const TextStyle(color: Colors.black, fontSize: 18),
+            ),
+            const Spacer(),
+            _roleSelector(),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_outline, color: Colors.black),
+            onPressed: () {},
+          ),
+        ],
       ),
-      body: Column(
-        children: [
-          if (_selectedRole == 'CEO') _buildTabs(),
-          Expanded(child: _buildContent()),
+      drawer: _selectedRole == 'CEO' ? _buildDrawer() : null,
+      body: _buildContent(),
+    );
+  }
+
+  Widget _roleSelector() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: DropdownButton<String>(
+        value: _selectedRole,
+        underline: const SizedBox(),
+        icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.black,
+          fontWeight: FontWeight.w500,
+        ),
+        onChanged: (v) => setState(() {
+          _selectedRole = v!;
+          _selectedView = 'Vista Express';
+        }),
+        items: const [
+          DropdownMenuItem(value: 'CEO', child: Text('CEO')),
+          DropdownMenuItem(value: 'Finanzas', child: Text('Finanzas')),
+          DropdownMenuItem(
+            value: 'Director de Compras',
+            child: Text('Director de Compras'),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTabs() {
+  Widget _buildDrawer() {
+    return Drawer(
+      backgroundColor: Colors.white,
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const SizedBox(height: 50),
+          _drawerItem(
+            icon: Icons.pie_chart,
+            label: 'Vista Express',
+            isSelected: _selectedView == 'Vista Express',
+            onTap: () {
+              setState(() => _selectedView = 'Vista Express');
+              Navigator.pop(context);
+            },
+          ),
+          _drawerItem(
+            icon: Icons.calendar_today,
+            label: 'Resultado Semanal',
+            isSelected: _selectedView == 'Resultado Semanal',
+            onTap: () {
+              setState(() => _selectedView = 'Resultado Semanal');
+              Navigator.pop(context);
+            },
+          ),
+          _drawerItem(
+            icon: Icons.analytics,
+            label: 'Vista General',
+            isSelected: _selectedView == 'Vista General',
+            onTap: () {
+              setState(() => _selectedView = 'Vista General');
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _drawerItem({
+    required IconData icon,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            InternalTab(
-              label: 'Vista Express',
-              icon: Icons.pie_chart,
-              selected: _internalIndex == 0,
-              onTap: () => setState(() => _internalIndex = 0),
-            ),
-            const SizedBox(width: 10),
-            InternalTab(
-              label: 'Resultado Semanal',
-              icon: Icons.calendar_today,
-              selected: _internalIndex == 1,
-              onTap: () => setState(() => _internalIndex = 1),
-            ),
-            const SizedBox(width: 10),
-            InternalTab(
-              label: 'Vista General',
-              icon: Icons.analytics,
-              selected: _internalIndex == 2,
-              onTap: () => setState(() => _internalIndex = 2),
-            ),
-          ],
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFF6200EE) : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: isSelected ? Colors.white : Colors.black54),
+        title: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black87,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
+        onTap: onTap,
       ),
     );
   }
@@ -78,19 +159,18 @@ class _CompetenciaPageState extends State<CompetenciaPage> {
   Widget _buildContent() {
     return SafeWidget(
       builder: (context) {
-        // Vistas para Finanzas
         if (_selectedRole == 'Finanzas') {
           return const FinanzasPage();
         }
 
-        // Vistas para Director de Compras
         if (_selectedRole == 'Director de Compras') {
           return const DirectorComprasPage();
         }
 
-        // Vistas para CEO (Default)
-        if (_internalIndex == 1) return const ResultadoSemanalView();
-        if (_internalIndex == 2) return VistaGeneralPage();
+        // Vistas para CEO
+        if (_selectedView == 'Resultado Semanal')
+          return const ResultadoSemanalView();
+        if (_selectedView == 'Vista General') return VistaGeneralPage();
 
         return const VistaExpressPage();
       },

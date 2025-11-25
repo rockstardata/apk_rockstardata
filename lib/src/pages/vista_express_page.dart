@@ -117,7 +117,6 @@ class VistaExpressPage extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // Bottom Buttons
-                  
                   ],
                 ),
               );
