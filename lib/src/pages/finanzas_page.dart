@@ -100,30 +100,6 @@ class _FinanzasPageState extends State<FinanzasPage> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _kpiCard(
-                  'Ratio del Pasivo',
-                  67751.0,
-                  '+€890',
-                  '+1.35%',
-                  true,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _kpiCard(
-                  'Saldo Final',
-                  69782.0,
-                  '+€1.120',
-                  '+1.63%',
-                  true,
-                ),
-              ),
-            ],
-          ),
           const SizedBox(height: 24),
           Container(
             padding: const EdgeInsets.all(16),
@@ -170,16 +146,257 @@ class _FinanzasPageState extends State<FinanzasPage> {
   }
 
   Widget _buildEficiencia() {
-    return const Center(
-      child: Text('Eficiencia - Proximamente', style: TextStyle(fontSize: 18)),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Eficiencia: Liquidez y Flujos',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+
+          // Three separate cards
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: _cardDecoration(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      'Líquido Disponible',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.info_outline,
+                      size: 14,
+                      color: Colors.grey,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '69.781 €',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  '+38% vs 51.427,76 € año pasado',
+                  style: TextStyle(fontSize: 11, color: Color(0xFF4CAF50)),
+                ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.trending_up,
+                      size: 14,
+                      color: Color(0xFF4CAF50),
+                    ),
+                    const SizedBox(width: 4),
+                    const Text(
+                      'Objetivo: -50.887 €',
+                      style: TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: _cardDecoration(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      'Cobros Totales',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.info_outline,
+                      size: 14,
+                      color: Colors.grey,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '73.699 €',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  '+8% vs 239.371,38 € año pasado',
+                  style: TextStyle(fontSize: 11, color: Color(0xFF4CAF50)),
+                ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.trending_up,
+                      size: 14,
+                      color: Color(0xFF4CAF50),
+                    ),
+                    const SizedBox(width: 4),
+                    const Text(
+                      'Objetivo: 239.790,93 €',
+                      style: TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: _cardDecoration(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      'Pagos Totales',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.info_outline,
+                      size: 14,
+                      color: Colors.grey,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '5.948 €',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  '+4% vs 303.219,48 € año pasado',
+                  style: TextStyle(fontSize: 11, color: Color(0xFF4CAF50)),
+                ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.trending_up,
+                      size: 14,
+                      color: Color(0xFF4CAF50),
+                    ),
+                    const SizedBox(width: 4),
+                    const Text(
+                      'Objetivo: 238.762,86 €',
+                      style: TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+          const Text(
+            'Ratios Clave',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          _circularRatio('Liquidez Liquidez', 0.06, const Color(0xFF9C27B0)),
+          const SizedBox(height: 12),
+          _circularRatio('Liquidez Solvencia', 0.86, const Color(0xFF6200EE)),
+          const SizedBox(height: 12),
+          _circularRatio(
+            'EBITDA Porcentaje ROI',
+            0.12,
+            const Color(0xFF00BCD4),
+          ),
+          const SizedBox(height: 80),
+        ],
+      ),
     );
   }
 
-  Widget _buildPerformance() {
-    return const Center(
-      child: Text('Performance - Proximamente', style: TextStyle(fontSize: 18)),
+  Widget _summaryItem(String title, double value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        const SizedBox(height: 4),
+        Text(
+          '${value.toStringAsFixed(0)} €',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
+
+  Widget _circularRatio(String title, double value, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: _cardDecoration(),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 80,
+            height: 80,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: CircularProgressIndicator(
+                    value: value,
+                    strokeWidth: 8,
+                    backgroundColor: Colors.grey.shade200,
+                    valueColor: AlwaysStoppedAnimation<Color>(color),
+                  ),
+                ),
+                Text(
+                  value.toStringAsFixed(2),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPerformance() => const Center(
+    child: Text('Performance - Próximamente', style: TextStyle(fontSize: 18)),
+  );
 
   Widget _buildDrawer() {
     return Drawer(
@@ -319,31 +536,27 @@ class _FinanzasPageState extends State<FinanzasPage> {
     );
   }
 
-  BoxDecoration _cardDecoration() {
-    return BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.05),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    );
-  }
+  BoxDecoration _cardDecoration() => BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.05),
+        blurRadius: 8,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  );
 
-  Widget _legend(Color color, String label) {
-    return Row(
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 6),
-        Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
-      ],
-    );
-  }
+  Widget _legend(Color color, String label) => Row(
+    children: [
+      Container(
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      ),
+      const SizedBox(width: 6),
+      Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+    ],
+  );
 }

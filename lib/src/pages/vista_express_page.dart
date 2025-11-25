@@ -117,69 +117,7 @@ class VistaExpressPage extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // Bottom Buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.pinkAccent,
-                              elevation: 2,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: const Column(
-                              children: [
-                                Text(
-                                  'Añadir',
-                                  style: TextStyle(color: Colors.pinkAccent),
-                                ),
-                                Text(
-                                  'Gasto',
-                                  style: TextStyle(
-                                    color: Colors.pinkAccent,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF2EB872),
-                              elevation: 2,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: const Column(
-                              children: [
-                                Text(
-                                  'Añadir',
-                                  style: TextStyle(color: Color(0xFF2EB872)),
-                                ),
-                                Text(
-                                  'Ingreso',
-                                  style: TextStyle(
-                                    color: Color(0xFF2EB872),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  
                   ],
                 ),
               );
